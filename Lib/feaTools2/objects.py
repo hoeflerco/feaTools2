@@ -32,14 +32,10 @@ class Table(list):
         for feature in self:
             for script in feature.scripts:
                 scriptTag = script.tag
-                if scriptTag == "DFLT":
-                    scriptTag = None
                 for language in script.languages:
                     languageTag = language.tag
                     languageSystems.add((scriptTag, languageTag))
         for scriptTag, languageTag in sorted(languageSystems):
-            if scriptTag is None:
-                scriptTag = "DFLT"
             writer.addLanguageSystem(scriptTag, languageTag)
         # classes
         for name, members in sorted(self.classes.items()):
@@ -360,9 +356,9 @@ class Feature(object):
         for script in self.scripts:
             for language in script.languages:
                 # check to make sure that the default hasn't happened twice
-                if script.tag == "DFLT" and language.tag is None:
+                if script.tag == "DFLT" and language.tag is "dflt":
                     pass
-                elif language.tag is None:
+                elif language.tag is "dflt":
                     assert script.tag not in scriptDefaultLookups, "Default language appears more than once."
                     scriptDefaultLookups[script.tag] = (language, [])
                 else:
@@ -370,9 +366,9 @@ class Feature(object):
                     languageSpecificLookups[script.tag, language.tag] = (language, [])
                 # store the lookups
                 for lookup in language.lookups:
-                    if script.tag == "DFLT" and language.tag is None:
+                    if script.tag == "DFLT" and language.tag is "dflt":
                         defaultLookups.append(lookup)
-                    elif language.tag is None:
+                    elif language.tag is "dflt":
                         scriptDefaultLookups[script.tag][1].append(lookup)
                     else:
                         languageSpecificLookups[script.tag, language.tag][1].append((lookup))

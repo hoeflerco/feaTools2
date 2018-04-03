@@ -5,10 +5,8 @@ def parseTable(writer, table, tableTag, excludeFeatures=None):
     features = {}
     for scriptRecord in table.ScriptList.ScriptRecord:
         scriptTag = scriptRecord.ScriptTag
-        if scriptTag == "DFLT":
-            scriptTag = None
         # default
-        languageTag = None
+        languageTag = "dflt"
         featureIndexes = scriptRecord.Script.DefaultLangSys.FeatureIndex
         for index in featureIndexes:
             featureRecord = table.FeatureList.FeatureRecord[index]
@@ -46,8 +44,6 @@ def parseTable(writer, table, tableTag, excludeFeatures=None):
     for featureTag, records in features.items():
         _records = []
         for (scriptTag, languageTag, lookupIndexes) in sorted(records):
-            if scriptTag is None:
-                scriptTag = "DFLT"
             lookupRecords = [table.LookupList.Lookup[index] for index in lookupIndexes]
             _records.append((scriptTag, languageTag, lookupRecords))
         features[featureTag] = _records
@@ -68,7 +64,7 @@ def parseScript(writer, table, tableTag, languageTag, lookupRecords):
 
 def parseLanguage(writer, table, tableTag, lookupRecords):
     for lookupRecord in lookupRecords:
-        lookup = writer.addLookup(None)
+        lookup = writer.addLookup("dflt")
         parseLookup(lookup, table, tableTag, lookupRecord)
 
 def parseLookup(writer, table, tableTag, lookupRecord):
